@@ -50,7 +50,8 @@ class filter_registered extends moodle_text_filter {
      * @return string text after processing
      */
     public function filter($text, array $options = array()) {
-        if (substr_count($text, self::TAG) > 1) {
+        if (strpos($text, self::TAG) !== false) {
+        	// Find the first occurence only.
             $this->replace_registered($text);
         }
         return $text;
