@@ -24,4 +24,11 @@
 
 $string["pluginname"] = 'Terminvergabe Kurzinfo';
 
-$string["subscribetounlock"] = 'Einschreiben um Inhalt zu sehen';
+$string["usage"] = 'Benutzung: Verwende {registered}[#], wobei "#" eine g&uuml;ltige Aktivit&auml;ts-ID ist, die im Link zur Terminvergabe auf der Kursseite zu finden ist.';
+$string["subscribetounlock"] = 'Hier einschreiben um Inhalt zu sehen';
+$string["closed"] = 'Geschlossen';
+$string["waitingfor"] = 'Warten auf {$a} Abmeldung(en)';
+$string["registeredalready"] = 'Erfolgreich angemeldet';
+$string["freeslots"] = 'Freie Pl&auml;tze: {$a}';
+$string["inqueue"] = 'Auf Warteliste: {$a}';
+$string["fullybooked"] = 'Ausgebucht';

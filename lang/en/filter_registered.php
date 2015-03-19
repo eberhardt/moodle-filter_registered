@@ -24,4 +24,11 @@
 
 $string["pluginname"] = 'Registration Info';
 
-$string["subscribetounlock"] = 'Subscribe to unlock.';
+$string["usage"] = 'Usage: Type {registered}[#], where `#` is a valid course module id, which is given by the link of the registration activity in your course page.';
+$string["subscribetounlock"] = 'Subscribe here to unlock.';
+$string["closed"] = 'Closed';
+$string["waitingfor"] = '{$a} predecessors in queue';
+$string["registeredalready"] = 'Registration succesful';
+$string["freeslots"] = '{$a} free slot(s)';
+$string["inqueue"] = 'Now in queue: {$a}';
+$string["fullybooked"] = 'Fully booked';
