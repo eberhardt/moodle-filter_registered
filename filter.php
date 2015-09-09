@@ -69,51 +69,49 @@ class filter_registered extends moodle_text_filter {
         $text = array_shift($parts); // Remove the leading part from array.
         foreach ($parts as $tail) {
         	// Add number of submissions in front of each other part.
-        	$cm = preg_match('/^\[([\d]+)\](.*)/', $tail, $match) ? clean_param($match[1], PARAM_INT) : self::NaN;
+        	$cm = preg_match('/^\[(\d+)\](.*)/', $tail, $match) ? clean_param($match[1], PARAM_INT) : self::NaN;
         	if ($cm === self::NaN) {
-				$text .= $this->brackets(get_string("usage", "filter_registered")) . $tail;
-			} else {
-				$tail = $match[2];
-				$cm = $DB->get_record("course_modules", array("id" => $cm));
-				$ctx = context_module::instance($cm->id, IGNORE_MISSING);
-				$regid = $ctx ? $DB->get_field("course_modules", "instance", array("id" => $cm->id)) : false;
-				$registration = $regid ? $DB->get_record("registration", array("id" => $regid)) : false;
-				if ($ctx && $regid && $registration) {
-					if (!has_capability("mod/registration:view", $ctx)) {
-						// Show link, if not subscribed to course.
-						// May lead to confusion, if rights are edited by teachers, because message can ocour,
-						// even if subscribed to the course. We accept that singular situation.
-						$text .= html_writer::link(new moodle_url("/enrol/index.php", array("id" => $cm->course)),
-						                           get_string("subscribetounlock", "filter_registered"))
-						       . $tail;
-					} else if ($registration->timeavailable < time()) {
-						// Registration is not available anymore.
-						$text .= get_string("closed", "filter_registered");
-					} else if ($pos = registration_get_position_in_list($regid, $USER->id)) {
-						// User is allready subscribed: vary between `in queue` an active registration.
-						$prior = $registration->number - $pos;
-						if ($prior < 0) {
-							$text .= get_string("waitingfor", "filter_registered", -1*$prior);
-						} else {
-							$text .= get_string("registeredalready", "filter_registered");
-						}
-						$text .= $tail;
+			$text .= $this->brackets(get_string("usage", "filter_registered"));
+		} else {
+			$tail = $match[2];
+			$cm = $DB->get_record("course_modules", array("id" => $cm));
+			$ctx = context_module::instance($cm->id, IGNORE_MISSING);
+			$regid = $ctx ? $DB->get_field("course_modules", "instance", array("id" => $cm->id)) : false;
+			$registration = $regid ? $DB->get_record("registration", array("id" => $regid)) : false;
+			if ($ctx && $regid && $registration) {
+				if (!has_capability("mod/registration:view", $ctx)) {
+					// Show link, if not subscribed to course.
+					// May lead to confusion, if rights are edited by teachers, because message can ocour,
+					// even if subscribed to the course. We accept that singular situation.
+					$text .= html_writer::link(new moodle_url("/enrol/index.php", array("id" => $cm->course)),
+					         get_string("subscribetounlock", "filter_registered"));
+				} else if ($registration->timeavailable < time()) {
+					// Registration is not available anymore.
+					$text .= get_string("closed", "filter_registered");
+				} else if ($pos = registration_get_position_in_list($regid, $USER->id)) {
+					// User is allready subscribed: vary between `in queue` an active registration.
+					$prior = $registration->number - $pos;
+					if ($prior < 0) {
+						$text .= get_string("waitingfor", "filter_registered", -1*$prior);
 					} else {
-						// User is not subscribed: vary between free slots available and queue
-						$free = $registration->number - registration_count_submissions($registration);
-						if ($free > 0) {
-							$text .= get_string("freeslots", "filter_registered", $free);
-						} else if ($registration->allowqueue) {
-							$text .= get_string("inqueue", "filter_registered", -1*$free);
-						} else {
-							$text .= get_string("fullybooked", "filter_registered");
-						}
-						$text .= $tail;
+						$text .= get_string("registeredalready", "filter_registered");
 					}
+				} else {
+					// User is not subscribed: vary between free slots available and queue
+					$free = $registration->number - registration_count_submissions($registration);
+					if ($free > 0) {
+						$text .= get_string("freeslots", "filter_registered", $free);
+					} else if ($registration->allowqueue) {
+						$text .= get_string("inqueue", "filter_registered", -1*$free);
+					} else {
+						$text .= get_string("fullybooked", "filter_registered");
+					}
+				}
 		        } else {
-		            $text .= $this->brackets(get_string("invalidmoduleid", "error", $cm->id)) . $tail;
+				$text .= $this->brackets(get_string("invalidmoduleid", "error", $cm->id));
 		        }
-			}
+		}
+		$text .= $tail;
         }
     }
 
